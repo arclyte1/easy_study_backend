@@ -27,6 +27,7 @@ DEBUG = True  # TODO
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.0.2.2',
+    'easy-study-api.herokuapp.com',
 ]
 
 # Application definition
