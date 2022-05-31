@@ -84,9 +84,17 @@ WSGI_APPLICATION = 'easy_study_backend.wsgi.application'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CONVERT_DB',  # The Server name from 1.5
+        'USER': 'postgres',  # The username from 1.6
+        'PASSWORD': 'secretpassword',  # The password from installation
+        'HOST': 'localhost',  # Host name/address from 1.6,
+        'PORT': '5432'  # Port from 1.6
     }
 }
 db_from_env = dj_database_url.config(conn_max_age=600)
