@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
-import dj_database_url
+#import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -92,7 +92,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CONVERT_DB',  # The Server name from 1.5
         'USER': 'postgres',  # The username from 1.6
-        'PASSWORD': 'secretpassword',  # The password from installation
+        'PASSWORD': 'password',  # The password from installation
         'HOST': 'localhost',  # Host name/address from 1.6,
         'PORT': '5432'  # Port from 1.6
     }
