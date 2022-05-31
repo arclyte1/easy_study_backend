@@ -9,8 +9,10 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,20 +21,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ttwu-o7ik6c2mncb4punh@mc2crso#9hc65tmo6+in(_4z&=-#'  # TODO
+SECRET_KEY = os.environ.get('SECRET_KEY')  # TODO
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True  # TODO
+DEBUG = False  # TODO
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.0.2.2',
     'easy-study-api.herokuapp.com',
 ]
-
-# Application definition
-
-STATIC_ROOT = "static"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -45,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
+    'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +54,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'easy_study_backend.urls'
 
@@ -87,6 +89,8 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -120,7 +124,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+# location where django collect all static files
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# location where you will store your static files
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'project_name/static')]
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
