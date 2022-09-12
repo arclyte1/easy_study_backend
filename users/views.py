@@ -274,7 +274,7 @@ class StudentList(APIView):
                 item |= {
                     'attendance': True if lesson.attendances.filter(id=student.id).exists() else False,
                     'mark': lesson.marks.filter(student_id=student.id).get().mark if
-                    lesson.marks.filter(student_id=student.id).exists() else 0.0}
+                    lesson.marks.filter(student_id=student.id).exists() else None}
                 students.append(item)
 
             return Response(data=students)
