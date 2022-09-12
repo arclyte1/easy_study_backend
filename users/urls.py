@@ -3,7 +3,6 @@ from rest_framework.routers import DefaultRouter
 
 from . import views
 from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
     TokenRefreshView,
     TokenVerifyView,
 )
@@ -27,4 +26,5 @@ urlpatterns = [
     path('lessons/<int:lesson_id>/', views.LessonDetail.as_view()),
     path('lessons/<int:lesson_id>/marks/', views.MarkList.as_view()),
     path('lessons/<int:lesson_id>/attendances/', views.AttendanceList.as_view()),
+    path('lessons/<int:lesson_id>/students/', views.StudentList.as_view()),
 ]

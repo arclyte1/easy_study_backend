@@ -1,16 +1,14 @@
-from rest_framework import viewsets, generics
+from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.utils.dateparse import parse_datetime
 from users.models import User, StudyGroup, Lesson, Mark
 from users.serializers import UserSerializer, StudyGroupSerializer, LessonSerializer, StudentLessonSerializer, \
-    MarkSerializer
+    MarkSerializer, SimpleUserSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -253,7 +251,7 @@ class AddStudent(APIView):
                 return Response(status=status.HTTP_404_NOT_FOUND)
             student = User.objects.get(email=request.data['email'])
 
-            if not group.students.filter(id=student.id).exists()\
+            if not group.students.filter(id=student.id).exists() \
                     and group.teachers.filter(id=request.user.id).exists():
                 group.students.add(student)
                 group.save()
@@ -263,3 +261,22 @@ class AddStudent(APIView):
                 return Response(status=status.HTTP_404_NOT_FOUND)
         except Exception:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class StudentList(APIView):
+    def get(self, request, lesson_id):
+        try:
+            lesson = Lesson.objects.get(id=lesson_id)
+            students = list()
+            for student in lesson.group.students.all():
+                item = SimpleUserSerializer(student).data
+                lesson.marks.filter(student_id=student.id).exists()
+                item |= {
+                    'attendance': True if lesson.attendances.filter(id=student.id).exists() else False,
+                    'mark': lesson.marks.filter(student_id=student.id).get().mark if
+                    lesson.marks.filter(student_id=student.id).exists() else 0.0}
+                students.append(item)
+
+            return Response(data=students)
+        except Exception as e:
+            return Response(data=str(e), status=status.HTTP_404_NOT_FOUND)

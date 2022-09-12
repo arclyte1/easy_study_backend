@@ -16,12 +16,6 @@ class StudyGroupSerializer(serializers.ModelSerializer):
         model = StudyGroup
         fields = ['id', 'group_title', 'subject_title', 'students', 'teachers', 'lessons']
 
-#
-# class StudentStudyGroupSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = StudyGroup
-#         fields = ['id', 'group_title', 'subject_title', 'students', 'teachers', 'lessons']
-
 
 class MarkSerializer(serializers.ModelSerializer):
     student = SimpleUserSerializer(read_only=True, many=False)
