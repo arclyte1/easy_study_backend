@@ -306,15 +306,15 @@ class StudentProgress(APIView):
     def get(self, request, group_id):
         try:
             group = StudyGroup.objects.get(id=group_id)
-
-            if group.students.filter(id=request.user.id).exists() \
+            if group.students.filter(email=request.data['email']).exists() \
                     and group.teachers.filter(id=request.user.id).exists():
+                studentId = group.students.get(email=request.data['email']).id
                 data = list()
                 for lesson in group.lessons.all():
                     item = StudentLessonSerializer(lesson).data
-                    item |= {'attendance': lesson.attendances.filter(id=request.user.id).exists()}
+                    item |= {'attendance': lesson.attendances.filter(id=studentId).exists()}
                     try:
-                        item |= {'mark': lesson.marks.filter(student_id=request.user.id).get().mark}
+                        item |= {'mark': lesson.marks.filter(student_id=studentId).get().mark}
                     except Mark.DoesNotExist:
                         item |= {'mark': None}
                     data.append(item)
