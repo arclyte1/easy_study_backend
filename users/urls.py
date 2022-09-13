@@ -24,7 +24,7 @@ urlpatterns = [
     path('groups/<int:group_id>/students/', views.AddStudent.as_view()),
     path('groups/<int:group_id>/teachers/', views.AddTeacher.as_view()),
     path('groups/<int:group_id>/lessons/', views.LessonList.as_view()),
-    path('groups/<int:group_id>/student_progress/<str:email>', views.StudentProgress.as_view()),
+    path('groups/<int:group_id>/student_progress/', views.StudentProgress.as_view()),
     path('lessons/<int:lesson_id>/', views.LessonDetail.as_view()),
     path('lessons/<int:lesson_id>/marks/', views.MarkList.as_view()),
     path('lessons/<int:lesson_id>/attendances/', views.AttendanceList.as_view()),

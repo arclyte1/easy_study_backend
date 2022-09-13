@@ -303,8 +303,9 @@ class StudentList(APIView):
 
 
 class StudentProgress(APIView):
-    def get(self, request, group_id, email):
+    def get(self, request, group_id):
         try:
+            email = request.GET.get('email', '')
             group = StudyGroup.objects.get(id=group_id)
             if group.students.filter(email=email).exists() \
                     and group.teachers.filter(id=request.user.id).exists():
