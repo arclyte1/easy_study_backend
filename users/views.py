@@ -248,12 +248,32 @@ class AddStudent(APIView):
         try:
             group = StudyGroup.objects.get(id=group_id)
             if not User.objects.filter(email=request.data['email']).exists():
-                return Response(status=status.HTTP_404_NOT_FOUND)
+                return Response(status=status.HTTP_403_FORBIDDEN)
             student = User.objects.get(email=request.data['email'])
 
             if not group.students.filter(id=student.id).exists() \
                     and group.teachers.filter(id=request.user.id).exists():
                 group.students.add(student)
+                group.save()
+                return Response(data=StudyGroupSerializer(group).data,
+                                status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+        except Exception:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class AddTeacher(APIView):
+    def post(self, request, group_id):
+        try:
+            group = StudyGroup.objects.get(id=group_id)
+            if not User.objects.filter(email=request.data['email']).exists():
+                return Response(status=status.HTTP_403_FORBIDDEN)
+            teacher = User.objects.get(email=request.data['email'])
+
+            if not group.teachers.filter(id=teacher.id).exists() \
+                    and group.teachers.filter(id=request.user.id).exists():
+                group.teachers.add(teacher)
                 group.save()
                 return Response(data=StudyGroupSerializer(group).data,
                                 status=status.HTTP_200_OK)
@@ -280,3 +300,26 @@ class StudentList(APIView):
             return Response(data=students)
         except Exception as e:
             return Response(data=str(e), status=status.HTTP_404_NOT_FOUND)
+
+
+class StudentProgress(APIView):
+    def get(self, request, group_id):
+        try:
+            group = StudyGroup.objects.get(id=group_id)
+
+            if group.students.filter(id=request.user.id).exists() \
+                    and group.teachers.filter(id=request.user.id).exists():
+                data = list()
+                for lesson in group.lessons.all():
+                    item = StudentLessonSerializer(lesson).data
+                    item |= {'attendance': lesson.attendances.filter(id=request.user.id).exists()}
+                    try:
+                        item |= {'mark': lesson.marks.filter(student_id=request.user.id).get().mark}
+                    except Mark.DoesNotExist:
+                        item |= {'mark': None}
+                    data.append(item)
+                return Response(data=data)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            return Response(status=status.HTTP_404_NOT_FOUND)
