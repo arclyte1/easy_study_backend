@@ -306,9 +306,9 @@ class StudentProgress(APIView):
     def get(self, request, group_id, email):
         try:
             group = StudyGroup.objects.get(id=group_id)
-            if group.students.filter(email=request.data['email']).exists() \
+            if group.students.filter(email=email).exists() \
                     and group.teachers.filter(id=request.user.id).exists():
-                studentId = group.students.get(email=request.data['email']).id
+                studentId = group.students.get(email=email).id
                 data = list()
                 for lesson in group.lessons.all():
                     item = StudentLessonSerializer(lesson).data
